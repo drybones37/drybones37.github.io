@@ -1,149 +1,219 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>👁️ Universal Gematria Detector</title>
-    <script src="https://cdn.jsdelivr.net/npm/gun/gun.js"></script>
-    <style>
-        body { background: #0a0a0a; color: #00ff41; font-family: 'Courier New', Courier, monospace; padding: 20px; text-align: center; }
-        .container { max-width: 900px; margin: auto; }
-        input { background: #111; border: 2px solid #00ff41; color: #00ff41; padding: 15px; width: 80%; font-size: 1.2rem; margin-bottom: 20px; outline: none; }
-        input:focus { box-shadow: 0 0 15px #00ff41; }
-        .list-container { display: flex; justify-content: space-around; gap: 20px; margin-top: 30px; }
-        .box { border: 1px solid #333; padding: 15px; width: 33%; height: 400px; overflow-y: auto; background: #111; border-radius: 5px; text-align: left; font-size: 0.9rem; }
-        .watchlist { color: #ff4444; border-color: #ff4444; }
-        .suspicious { color: #ffa500; border-color: #ffa500; }
-        h2 { font-size: 0.9rem; text-transform: uppercase; border-bottom: 1px solid #333; padding-bottom: 10px; }
-        .entry { margin-bottom: 8px; border-bottom: 1px solid #222; padding-bottom: 4px; }
-        .val { color: #888; font-size: 0.8rem; }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>😈 Antichrist Watchlist</title>
+  <script src="https://cdn.jsdelivr.net/npm/gun/gun.js"></script>
+  <style>
+    body {
+      background: #0a0a0a;
+      color: #00ff41;
+      font-family: 'Courier New', Courier, monospace;
+      padding: 20px;
+      text-align: center;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: auto;
+    }
+
+    input {
+      background: #111;
+      border: 2px solid #00ff41;
+      color: #00ff41;
+      padding: 15px;
+      width: 80%;
+      font-size: 1.2rem;
+      margin-bottom: 20px;
+      outline: none;
+    }
+
+    input:focus {
+      box-shadow: 0 0 15px #00ff41;
+    }
+
+    .list-container {
+      display: flex;
+      justify-content: space-around;
+      gap: 20px;
+      margin-top: 30px;
+    }
+
+    .box {
+      border: 1px solid #333;
+      padding: 15px;
+      width: 33%;
+      height: 400px;
+      overflow-y: auto;
+      background: #111;
+      border-radius: 5px;
+      text-align: left;
+      font-size: 0.9rem;
+    }
+
+    .watchlist {
+      color: #ff4444;
+      border-color: #ff4444;
+    }
+
+    .suspicious {
+      color: #ffa500;
+      border-color: #ffa500;
+    }
+
+    h2 {
+      font-size: 0.9rem;
+      text-transform: uppercase;
+      border-bottom: 1px solid #333;
+      padding-bottom: 10px;
+    }
+
+    .entry {
+      margin-bottom: 8px;
+      border-bottom: 1px solid #222;
+      padding-bottom: 4px;
+    }
+
+    .val {
+      color: #888;
+      font-size: 0.8rem;
+    }
+  </style>
 </head>
+
 <body>
 
-<div class="container">
-    <h1>ANCIENT NUMERICAL ANALYSIS</h1>
-    <input type="text" id="nameInput" placeholder="ENTER FULL NAME & PRESS ENTER..." onkeyup="if(event.key==='Enter') processName()">
-    
-    <div class="list-container">
-        <div class="box" id="all-box">
-            <h2>📜 ALL ENTRIES</h2>
-            <div id="all-list"></div>
-        </div>
-        <div class="box suspicious" id="susp-box">
-            <h2>⚠️ SUSPICIOUS (600-700)</h2>
-            <div id="suspicious-list"></div>
-        </div>
-        <div class="box watchlist" id="watch-box">
-            <h2>🚨 WATCHLIST (666)</h2>
-            <div id="watchlist-list"></div>
-        </div>
-    </div>
-</div>
+  <div class="container">
+    <h1>NUMERICAL ANALYSIS</h1>
+    <input type="text" id="nameInput" placeholder="ENTER FULL NAME & PRESS ENTER..."
+      onkeyup="if(event.key==='Enter') processName()">
 
-<script>
+    <div class="list-container">
+      <div class="box" id="all-box">
+        <h2>📜 ALL ENTRIES</h2>
+        <div id="all-list"></div>
+      </div>
+      <div class="box suspicious" id="susp-box">
+        <h2>⚠️ SUSPICIOUS (600-700)</h2>
+        <div id="suspicious-list"></div>
+      </div>
+      <div class="box watchlist" id="watch-box">
+        <h2>🚨 WATCHLIST (666)</h2>
+        <div id="watchlist-list"></div>
+      </div>
+    </div>
+  </div>
+  <footer>
+    <p>View the source code on <a href="https://github.com/drybones37/drybones37.github.io" target="_blank"
+        rel="noopener noreferrer">GitHub</a></p>
+  </footer>
+
+  <script>
     // Initialize Gun.js
     const gun = Gun(['https://gun-manhattan.herokuapp.com/gun', 'https://peer.wall.org/gun']);
 
     // --- YOUR CUSTOM CALCULATION LOGIC ---
 
     function greekCalc(gn) {
-        const rules = [
-            ['sampi', 900], ['kh', 600], ['ph', 500], ['ps', 700], ['th', 9], ['rh', 100], 
-            ['st', 6], ['ē', 8], ['ō', 800], ['a', 1], ['b', 2], ['g', 3], ['d', 4], 
-            ['e', 5], ['w', 6], ['z', 7], ['i', 10], ['k', 20], ['l', 30], ['m', 40],
-            ['n', 50], ['x', 60], ['o', 70], ['p', 80], ['q', 90], ['r', 100], ['s', 200], 
-            ['t', 300], ['u', 400]
-        ];
-        let total = 0;
-        let str = gn.toLowerCase();
-        rules.forEach(([key, val]) => {
-            const regex = new RegExp(key, 'g');
-            const matches = (str.match(regex) || []).length;
-            total += (matches * val);
-            str = str.replace(regex, '');
-        });
-        return total;
+      const rules = [
+        ['sampi', 900], ['kh', 600], ['ph', 500], ['ps', 700], ['th', 9], ['rh', 100],
+        ['st', 6], ['ē', 8], ['ō', 800], ['a', 1], ['b', 2], ['g', 3], ['d', 4],
+        ['e', 5], ['w', 6], ['z', 7], ['i', 10], ['k', 20], ['l', 30], ['m', 40],
+        ['n', 50], ['x', 60], ['o', 70], ['p', 80], ['q', 90], ['r', 100], ['s', 200],
+        ['t', 300], ['u', 400]
+      ];
+      let total = 0;
+      let str = gn.toLowerCase();
+      rules.forEach(([key, val]) => {
+        const regex = new RegExp(key, 'g');
+        const matches = (str.match(regex) || []).length;
+        total += (matches * val);
+        str = str.replace(regex, '');
+      });
+      return total;
     }
 
     function latinCalc(ln) {
-        const replacements = [
-            ['xxviii', 28], ['xxiii', 23], ['dccc', 800], ['lxxx', 80], ['xxvii', 27], 
-            ['xxiv', 24], ['xxii', 22], ['xviii', 18], ['xvii', 17], ['viii', 8], 
-            ['xiii', 13], ['dcc', 700], ['ccc', 300], ['lxx', 70], ['cii', 102], 
-            ['xix', 19], ['xiv', 14], ['xvi', 16], ['iii', 3], ['xxx', 30], ['vii', 7], 
-            ['xxi', 21], ['xii', 12], ['xx', 20], ['cc', 200], ['xv', 15], ['xl', 40],
-            ['xc', 90], ['lx', 60], ['iv', 4], ['vi', 6], ['ix', 9], ['xi', 11], 
-            ['ci', 101], ['cd', 400], ['dc', 600], ['cm', 900], ['ii', 2], ['i', 1], 
-            ['v', 5], ['x', 10], ['l', 50], ['c', 100], ['d', 500], ['m', 1000]
-        ];
-        let total = 0;
-        let tempStr = ln.toLowerCase();
-        replacements.forEach(([key, val]) => {
-            const regex = new RegExp(key, 'g');
-            const matches = (tempStr.match(regex) || []).length;
-            total += (matches * val);
-            tempStr = tempStr.replace(regex, '');
-        });
-        return total;
+      const replacements = [
+        ['xxviii', 28], ['xxiii', 23], ['dccc', 800], ['lxxx', 80], ['xxvii', 27],
+        ['xxiv', 24], ['xxii', 22], ['xviii', 18], ['xvii', 17], ['viii', 8],
+        ['xiii', 13], ['dcc', 700], ['ccc', 300], ['lxx', 70], ['cii', 102],
+        ['xix', 19], ['xiv', 14], ['xvi', 16], ['iii', 3], ['xxx', 30], ['vii', 7],
+        ['xxi', 21], ['xii', 12], ['xx', 20], ['cc', 200], ['xv', 15], ['xl', 40],
+        ['xc', 90], ['lx', 60], ['iv', 4], ['vi', 6], ['ix', 9], ['xi', 11],
+        ['ci', 101], ['cd', 400], ['dc', 600], ['cm', 900], ['ii', 2], ['i', 1],
+        ['v', 5], ['x', 10], ['l', 50], ['c', 100], ['d', 500], ['m', 1000]
+      ];
+      let total = 0;
+      let tempStr = ln.toLowerCase();
+      replacements.forEach(([key, val]) => {
+        const regex = new RegExp(key, 'g');
+        const matches = (tempStr.match(regex) || []).length;
+        total += (matches * val);
+        tempStr = tempStr.replace(regex, '');
+      });
+      return total;
     }
 
     function hebrewCalc(hn) {
-        const replacements = [
-            ['sh', 300], ['ch', 8], ['th', 400], ['ts', 90], ['a', 1], ['b', 2], 
-            ['g', 3], ['d', 4], ['h', 5], ['v', 6], ['z', 7], ['t', 9], ['y', 10], 
-            ['k', 20], ['l', 30], ['m', 40], ['n', 50], ['s', 60], ['p', 80],
-            ['f', 80], ['q', 100], ['r', 200]
-        ];
-        let total = 0;
-        let tempStr = hn.toLowerCase();
-        replacements.forEach(([key, val]) => {
-            const regex = new RegExp(key, 'g');
-            const matches = (tempStr.match(regex) || []).length;
-            total += (matches * val);
-            tempStr = tempStr.replace(regex, '');
-        });
-        return total;
+      const replacements = [
+        ['sh', 300], ['ch', 8], ['th', 400], ['ts', 90], ['a', 1], ['b', 2],
+        ['g', 3], ['d', 4], ['h', 5], ['v', 6], ['z', 7], ['t', 9], ['y', 10],
+        ['k', 20], ['l', 30], ['m', 40], ['n', 50], ['s', 60], ['p', 80],
+        ['f', 80], ['q', 100], ['r', 200]
+      ];
+      let total = 0;
+      let tempStr = hn.toLowerCase();
+      replacements.forEach(([key, val]) => {
+        const regex = new RegExp(key, 'g');
+        const matches = (tempStr.match(regex) || []).length;
+        total += (matches * val);
+        tempStr = tempStr.replace(regex, '');
+      });
+      return total;
     }
 
     // --- APP FLOW ---
 
     function processName() {
-        const rawName = document.getElementById('nameInput').value;
-        if(!rawName) return;
+      const rawName = document.getElementById('nameInput').value;
+      if (!rawName) return;
 
-        // Normalize (Remove accents like 'João' -> 'Joao')
-        const normalized = rawName.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
-        const cleaned = normalized.toLowerCase().replace(/[^a-z\s]/g, '');
+      // Normalize (Remove accents like 'João' -> 'Joao')
+      const normalized = rawName.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+      const cleaned = normalized.toLowerCase().replace(/[^a-z\s]/g, '');
 
-        const scores = {
-            greek: greekCalc(cleaned),
-            hebrew: hebrewCalc(cleaned),
-            latin: latinCalc(cleaned)
-        };
+      const scores = {
+        greek: greekCalc(cleaned),
+        hebrew: hebrewCalc(cleaned),
+        latin: latinCalc(cleaned)
+      };
 
-        const entry = { name: rawName, ...scores, time: Date.now() };
+      const entry = {name: rawName, ...scores, time: Date.now()};
 
-        // Save to Gun.js Graph
-        gun.get('detector_all').set(entry);
-        
-        // Logical Routing
-        const vals = Object.values(scores);
-        if (vals.some(v => v >= 600 && v <= 700)) gun.get('detector_suspicious').set(entry);
-        if (vals.includes(666)) gun.get('detector_watchlist').set(entry);
+      // Save to Gun.js Graph
+      gun.get('detector_all').set(entry);
 
-        document.getElementById('nameInput').value = '';
+      // Logical Routing
+      const vals = Object.values(scores);
+      if (vals.some(v => v >= 600 && v <= 700)) gun.get('detector_suspicious').set(entry);
+      if (vals.includes(666)) gun.get('detector_watchlist').set(entry);
+
+      document.getElementById('nameInput').value = '';
     }
 
     // UI RENDERER
     const render = (containerId, data) => {
-        if (!data || !data.name) return;
-        const list = document.getElementById(containerId);
-        const div = document.createElement('div');
-        div.className = 'entry';
-        div.innerHTML = `<strong>${data.name}</strong><br>
+      if (!data || !data.name) return;
+      const list = document.getElementById(containerId);
+      const div = document.createElement('div');
+      div.className = 'entry';
+      div.innerHTML = `<strong>${data.name}</strong><br>
                          <span class="val">G:${data.greek} | H:${data.hebrew} | L:${data.latin}</span>`;
-        list.prepend(div);
+      list.prepend(div);
     };
 
     // Listen for Real-time Updates
@@ -151,6 +221,7 @@
     gun.get('detector_suspicious').map().on(data => render('suspicious-list', data));
     gun.get('detector_watchlist').map().on(data => render('watchlist-list', data));
 
-</script>
+  </script>
 </body>
+
 </html>
