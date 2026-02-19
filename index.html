@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>👁️ The Universal Gematria Detector</title>
+    <script src="https://cdn.jsdelivr.net/npm/gun/gun.js"></script>
+    <style>
+        body { background: #0a0a0a; color: #00ff41; font-family: monospace; padding: 20px; text-align: center; }
+        input { background: #111; border: 1px solid #00ff41; color: #00ff41; padding: 10px; width: 80%; margin: 10px 0; }
+        .list-container { display: flex; justify-content: space-around; margin-top: 30px; text-align: left; }
+        .box { border: 1px solid #333; padding: 10px; width: 30%; height: 300px; overflow-y: auto; }
+        .watchlist { color: #ff0000; border-color: #ff0000; }
+        .suspicious { color: #ffa500; border-color: #ffa500; }
+        h2 { font-size: 1rem; text-decoration: underline; }
+    </style>
+</head>
+<body>
+
+    <h1>DATABASE ENTRY: NUMERICAL ANALYSIS</h1>
+    <input type="text" id="nameInput" placeholder="Enter Name for Analysis..." onkeyup="if(event.key==='Enter') processName()">
+    <p id="currentResult">Status: Awaiting Input...</p>
+
+    <div class="list-container">
+        <div class="box">
+            <h2>📜 ALL ENTRIES</h2>
+            <div id="all-list"></div>
+        </div>
+        <div class="box suspicious">
+            <h2>⚠️ SUSPICIOUS (600-700)</h2>
+            <div id="suspicious-list"></div>
+        </div>
+        <div class="box watchlist">
+            <h2>🚨 WATCHLIST (666)</h2>
+            <div id="watchlist-list"></div>
+        </div>
+    </div>
+
+    <script>
+        // Initialize Gun with multiple relay peers for longevity
+        const gun = Gun(['https://gun-manhattan.herokuapp.com/gun', 'https://peer.wall.org/gun']);
+        
+        // Calculation Logic
+        const calculate = (name, type) => {
+            let sum = 0;
+            const text = name.toLowerCase().replace(/[^a-z]/g, '');
+            for (let char of text) {
+                let val = char.charCodeAt(0) - 96;
+                // Simplified Gematria Logic (can be expanded for specific Greek/Hebrew maps)
+                if (type === 'greek') sum += (val * 7); 
+                if (type === 'hebrew') sum += (val * 3);
+                if (type === 'latin') sum += (val * 1);
+            }
+            return sum;
+        };
+
+        function processName() {
+            const name = document.getElementById('nameInput').value;
+            if(!name) return;
+
+            const scores = {
+                greek: calculate(name, 'greek'),
+                hebrew: calculate(name, 'hebrew'),
+                latin: calculate(name, 'latin')
+            };
+
+            const entry = { name, ...scores };
+            
+            // SAVE TO GUN.JS
+            gun.get('gematria_all').set(entry);
+            
+            if (Object.values(scores).some(v => v > 600 && v < 700)) gun.get('gematria_suspicious').set(entry);
+            if (Object.values(scores).includes(666)) gun.get('gematria_watchlist').set(entry);
+
+            document.getElementById('nameInput').value = '';
+        }
+
+        // LIVE SYNC: Displaying data as it arrives from the P2P network
+        const render = (id, data) => {
+            if(!data.name) return;
+            const div = document.createElement('div');
+            div.innerText = `${data.name} (G:${data.greek} H:${data.hebrew} L:${data.latin})`;
+            document.getElementById(id).prepend(div);
+        };
+
+        gun.get('gematria_all').map().on(data => render('all-list', data));
+        gun.get('gematria_suspicious').map().on(data => render('suspicious-list', data));
+        gun.get('gematria_watchlist').map().on(data => render('watchlist-list', data));
+
+    </script>
+</body>
+</html>
