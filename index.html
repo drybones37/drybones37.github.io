@@ -5,83 +5,8 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>😈 Antichrist Watchlist</title>
+  <link rel="stylesheet" href="style.css">
   <script src="https://cdn.jsdelivr.net/npm/gun/gun.js"></script>
-  <style>
-    body {
-      background: #0a0a0a;
-      color: #00ff41;
-      font-family: 'Courier New', Courier, monospace;
-      padding: 20px;
-      text-align: center;
-    }
-
-    .container {
-      max-width: 900px;
-      margin: auto;
-    }
-
-    input {
-      background: #111;
-      border: 2px solid #00ff41;
-      color: #00ff41;
-      padding: 15px;
-      width: 80%;
-      font-size: 1.2rem;
-      margin-bottom: 20px;
-      outline: none;
-    }
-
-    input:focus {
-      box-shadow: 0 0 15px #00ff41;
-    }
-
-    .list-container {
-      display: flex;
-      justify-content: space-around;
-      gap: 20px;
-      margin-top: 30px;
-    }
-
-    .box {
-      border: 1px solid #333;
-      padding: 15px;
-      width: 33%;
-      height: 400px;
-      overflow-y: auto;
-      background: #111;
-      border-radius: 5px;
-      text-align: left;
-      font-size: 0.9rem;
-    }
-
-    .watchlist {
-      color: #ff4444;
-      border-color: #ff4444;
-    }
-
-    .suspicious {
-      color: #ffa500;
-      border-color: #ffa500;
-    }
-
-    h2 {
-      font-size: 0.9rem;
-      text-transform: uppercase;
-      border-bottom: 1px solid #333;
-      padding-bottom: 10px;
-    }
-
-    .entry {
-      margin-bottom: 8px;
-      border-bottom: 1px solid #222;
-      padding-bottom: 4px;
-    }
-
-    .val {
-      color: #888;
-      font-size: 0.8rem;
-    }
-  </style>
 </head>
 
 <body>
@@ -89,7 +14,7 @@
   <div class="container">
     <h1>NUMERICAL ANALYSIS</h1>
     <input type="text" id="nameInput" placeholder="ENTER FULL NAME & PRESS ENTER..."
-      onkeyup="if(event.key==='Enter') processName()">
+      onkeyup="if(event.key==='Enter') processName(this.value)">
 
     <div class="list-container">
       <div class="box" id="all-box">
@@ -106,14 +31,66 @@
       </div>
     </div>
   </div>
-  <footer>
-    <p>View the source code on <a href="https://github.com/drybones37/drybones37.github.io" target="_blank"
-        rel="noopener noreferrer">GitHub</a></p>
-  </footer>
+
+
+  <script src="https://cdn.jsdelivr.net/npm/gun/gun.js"></script>
 
   <script>
-    // Initialize Gun.js
-    const gun = Gun(['https://gun-manhattan.herokuapp.com/gun', 'https://peer.wall.org/gun']);
+
+
+    // 1. Initialize Gun with automated relay discovery
+    async function initGun() {
+      let peers = [
+        'https://gun-manhattan.herokuapp.com/gun',
+        'https://peer.wall.org/gun',
+        'https://dletta.rv.mivm.io/gun'
+      ];
+
+      try {
+        // Attempt to fetch fresh relays from a reliable source
+        const response = await fetch('https://raw.githubusercontent.com/amark/gun/master/peers.json');
+        if (response.ok) {
+          const freshRelays = await response.json();
+          const dynamicPeers = Object.keys(freshRelays);
+          peers = [...new Set([...peers, ...dynamicPeers])];
+        }
+      } catch (e) {
+        console.warn("Using default hardcoded relays.");
+      }
+      return Gun(peers);
+    }
+
+    let gun; // Global variable
+
+    // 2. Start everything on page load
+    window.onload = async () => {
+      gun = await initGun();
+      console.log("Helix Gematria: Gun.js Active");
+
+      // UI Rendering Function
+      const render = (containerId, data, id) => {
+        if (!data || !data.name) return;
+        const list = document.getElementById(containerId);
+        if (!list) return;
+
+        const domId = `${containerId}-${id}`;
+        if (document.getElementById(domId)) return;
+
+        const div = document.createElement('div');
+        div.id = domId;
+        div.className = 'entry'; // Style this in your CSS
+        div.innerHTML = `
+                <strong>${data.name}</strong><br>
+                <span class="val">G:${data.greek} | H:${data.hebrew} | L:${data.latin}</span>
+            `;
+        list.prepend(div);
+      };
+
+      // Initialize Listeners immediately after Gun is ready
+      gun.get('detector_all').map().on((data, id) => render('all-list', data, id));
+      gun.get('detector_suspicious').map().on((data, id) => render('suspicious-list', data, id));
+      gun.get('detector_watchlist').map().on((data, id) => render('watchlist-list', data, id));
+    };
 
     // --- YOUR CUSTOM CALCULATION LOGIC ---
 
@@ -176,14 +153,11 @@
       return total;
     }
 
-    // --- APP FLOW ---
+    // 3. Process the Input (Global function for HTML access)
+    window.processName = function (val) {
+      if (!val || !gun) return;
 
-    function processName() {
-      const rawName = document.getElementById('nameInput').value;
-      if (!rawName) return;
-
-      // Normalize (Remove accents like 'João' -> 'Joao')
-      const normalized = rawName.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+      const normalized = val.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
       const cleaned = normalized.toLowerCase().replace(/[^a-z\s]/g, '');
 
       const scores = {
@@ -192,36 +166,31 @@
         latin: latinCalc(cleaned)
       };
 
-      const entry = {name: rawName, ...scores, time: Date.now()};
+      const entryId = cleaned.replace(/\s+/g, '_');
 
-      // Save to Gun.js Graph
-      gun.get('detector_all').set(entry);
+      // FIXED: Changed 'rawName' to 'val' to match the parameter
+      const entry = {name: val, ...scores, time: Date.now()};
+
+      // Save to main bucket
+      gun.get('detector_all').get(entryId).put(entry);
 
       // Logical Routing
       const vals = Object.values(scores);
-      if (vals.some(v => v >= 600 && v <= 700)) gun.get('detector_suspicious').set(entry);
-      if (vals.includes(666)) gun.get('detector_watchlist').set(entry);
+      if (vals.some(v => v >= 600 && v <= 700)) {
+        gun.get('detector_suspicious').get(entryId).put(entry);
+      }
+      if (vals.includes(666)) {
+        gun.get('detector_watchlist').get(entryId).put(entry);
+      }
 
       document.getElementById('nameInput').value = '';
-    }
-
-    // UI RENDERER
-    const render = (containerId, data) => {
-      if (!data || !data.name) return;
-      const list = document.getElementById(containerId);
-      const div = document.createElement('div');
-      div.className = 'entry';
-      div.innerHTML = `<strong>${data.name}</strong><br>
-                         <span class="val">G:${data.greek} | H:${data.hebrew} | L:${data.latin}</span>`;
-      list.prepend(div);
     };
-
-    // Listen for Real-time Updates
-    gun.get('detector_all').map().on(data => render('all-list', data));
-    gun.get('detector_suspicious').map().on(data => render('suspicious-list', data));
-    gun.get('detector_watchlist').map().on(data => render('watchlist-list', data));
-
   </script>
+
+  <footer>
+    <p>View the source code on <a href="https://github.com/drybones37/drybones37.github.io" target="_blank"
+        rel="noopener noreferrer">GitHub</a></p>
+  </footer>
 </body>
 
 </html>
